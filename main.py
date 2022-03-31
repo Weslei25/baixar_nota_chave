@@ -4,7 +4,7 @@ from pynfe.utils.flags import NAMESPACE_NFE
 from lxml import etree
 from config import *
 from PyQt5 import QtWidgets
-from tela import Ui_MainWindow
+from layout.tela import Ui_MainWindow
 
 
 class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
@@ -24,7 +24,7 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
         certificado=self.ui.lineEdit_2.text()
         senha=self.ui.lineEdit_3.text()
         CNPJ=self.ui.lineEdit_4.text()
-        uf=self.ui.lineEdit_5.text()
+        uf=self.ui.lineEdit_5.text().upper()
         
         homologacao=False
         ultNSU=0

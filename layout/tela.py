@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'tela.ui'
+# Form implementation generated from reading ui file 'layout\tela.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -16,7 +16,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(790, 341)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("icons8-nota-fiscal-electrónica-240.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("layout\\../img/icons8-nota-fiscal-electrónica-240.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -108,7 +108,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addItem(spacerItem, 2, 1, 1, 1)
         self.pushButton = QtWidgets.QPushButton(self.frame)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("accept.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap("layout\\../img/accept.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton.setIcon(icon1)
         self.pushButton.setObjectName("pushButton")
         self.gridLayout_2.addWidget(self.pushButton, 3, 2, 1, 1)

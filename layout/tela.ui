@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>icons8-nota-fiscal-electrónica-240.png</normaloff>icons8-nota-fiscal-electrónica-240.png</iconset>
+    <normaloff>../img/icons8-nota-fiscal-electrónica-240.png</normaloff>../img/icons8-nota-fiscal-electrónica-240.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -210,7 +210,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>accept.png</normaloff>accept.png</iconset>
+           <normaloff>../img/accept.png</normaloff>../img/accept.png</iconset>
          </property>
         </widget>
        </item>
