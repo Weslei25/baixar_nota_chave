@@ -1,0 +1,8 @@
+pyopenssl
+requests
+lxml
+signxml
+
+[nfse]
+suds-jurko
+pyxb==1.2.4
