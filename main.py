@@ -5,7 +5,9 @@ from lxml import etree
 from config import *
 from PyQt5 import QtWidgets
 from layout.tela import Ui_MainWindow
-
+import logging
+import requests
+import json
 
 class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
     
@@ -38,12 +40,13 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
         try:
             
             salvar = QtWidgets.QFileDialog.getOpenFileName()[0]
-            
+            if salvar == '':
+                return
             if not '.pfx' in salvar:
                 QtWidgets.QMessageBox.warning(
                     self, 'Atenção', 'Certificado invalido \n{}'.format(salvar))
                 return
-            self.ui.lineEdit_4.setText(salvar)
+            self.ui.lineEdit_2.setText(salvar)
         except Exception as erro:
             QtWidgets.QMessageBox.information(self, 'Erro', '{}'.format(erro))
             return
@@ -52,12 +55,13 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
         try:
             
             salvar = QtWidgets.QFileDialog.getOpenFileName()[0]
-            
+            if salvar == '':
+                return
             if not '.txt' in salvar:
                 QtWidgets.QMessageBox.information(
                     self, 'Atenção', 'Somente arquivos de texto *.TXT \n{}'.format(salvar))
                 return
-            self.ui.lineEdit_4.setText(salvar)
+            self.ui.lineEdit.setText(salvar)
         except Exception as erro:
             QtWidgets.QMessageBox.warning(self, 'Erro', '{}'.format(erro))
             return
@@ -127,7 +131,7 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
                         print(f'Não há mais documentos a pesquisar')
                         logging.warning(f'Não há mais documentos a pesquisar')
                         continue
-                        break
+                        
                     else:
                         print(f'Falha')
                         logging.error(f'Falha')
@@ -137,10 +141,40 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
             logging.exception(erro)
             QtWidgets.QMessageBox.critical(self, "Atenção", "{}\nVerifique os logs".format(erro))
             return
+
+
+
+    def consulta_token(self,):
+        confi = self.lerconfig()
+        tokem = confi['token']
+
+        from requests.auth import HTTPBasicAuth
+        request = requests.get('https://api.github.com/user', auth=HTTPBasicAuth('wesleisantos25@hotmail.com', tokem))
+        if request.status_code != 200:
+            logging.warning("Token informado não é valido, contate o administrador do software")
+            exit()
+
+        todo = str(json.loads(request.content))
+        logging.info(todo)
+
+    def lerconfig(self,):
+        try:    
+            with open('./config.json') as f:
+                config_ = json.load(f)
+                return config_
+        except Exception as erros:
+            logging.exception(erros)
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('fusion')
-    tela = Tela()
-    tela.show()
+    try:
+        autenticar = Tela()
+        autenticar.consulta_token()
+    except Exception as e:
+        logging.exception(e)
+        print(e)
+    autenticar.show()
     sys.exit(app.exec_())
