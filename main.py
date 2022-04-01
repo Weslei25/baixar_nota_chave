@@ -22,12 +22,12 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
 
     def _get_pegar_dados(self):
         pass
-        chaves=self.ui.lineEdit.text()
-        certificado=self.ui.lineEdit_2.text()
+        chaves=self.ui.lineEdit_6.text()
+        certificado=self.ui.lineEdit.text()
         senha=self.ui.lineEdit_3.text()
         CNPJ=self.ui.lineEdit_4.text()
         uf=self.ui.lineEdit_5.text().upper()
-        
+        chave_acesso = self.ui.lineEdit_2.text()
         homologacao=False
         ultNSU=0
         cStat=0
@@ -46,7 +46,7 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
                 QtWidgets.QMessageBox.warning(
                     self, 'Atenção', 'Certificado invalido \n{}'.format(salvar))
                 return
-            self.ui.lineEdit_2.setText(salvar)
+            self.ui.lineEdit.setText(salvar)
         except Exception as erro:
             QtWidgets.QMessageBox.information(self, 'Erro', '{}'.format(erro))
             return
@@ -61,7 +61,7 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
                 QtWidgets.QMessageBox.information(
                     self, 'Atenção', 'Somente arquivos de texto *.TXT \n{}'.format(salvar))
                 return
-            self.ui.lineEdit.setText(salvar)
+            self.ui.lineEdit_6.setText(salvar)
         except Exception as erro:
             QtWidgets.QMessageBox.warning(self, 'Erro', '{}'.format(erro))
             return

@@ -1,7 +1,7 @@
 import logging
 import os 
 
-criar_exe = #pyinstaller -F --windowed --icon="img\icons8-nota-fiscal-electrónica-240" .\main.py
+# pyinstaller -F --windowed --icon="img\icons8-nota-fiscal-electrónica-240" .\main.py
 
 if not os.path.isdir('logs'):
     os.mkdir('logs')
