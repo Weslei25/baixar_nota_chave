@@ -2,7 +2,7 @@ import logging
 import os 
 
 # pyinstaller -F --windowed --icon="img\icons8-nota-fiscal-electrónica-240" .\main.py
-
+# pyuic5.exe layout\tela.ui -o layout\tela.py -x
 if not os.path.isdir('logs'):
     os.mkdir('logs')
 if not os.path.isdir('temp'):

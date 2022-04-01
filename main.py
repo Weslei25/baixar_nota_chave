@@ -1,5 +1,11 @@
 from pynfe.processamento.comunicacao import ComunicacaoSefaz
 from pynfe.utils.descompactar import DescompactaGzip
+from pynfe.processamento.comunicacao import ComunicacaoSefaz
+from pynfe.processamento.serializacao import SerializacaoXML
+from pynfe.processamento.assinatura import AssinaturaA1
+from pynfe.entidades.evento import EventoManifestacaoDest
+from pynfe.entidades.fonte_dados import _fonte_dados
+import datetime
 from pynfe.utils.flags import NAMESPACE_NFE
 from lxml import etree
 from config import *
@@ -33,8 +39,75 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
         cStat=0
         maxNSU=0
         NSU=0
+        if not chave_acesso or chave_acesso == '':
 
-        self._set_baixar_notas(chaves=chaves, certificado=certificado, senha=senha, uf=uf, CNPJ=CNPJ)
+            self._set_baixar_notas(chaves=chaves, certificado=certificado, senha=senha, uf=uf, CNPJ=CNPJ)
+        if chave_acesso:
+            self.baixarxhave(chave=chave_acesso, certificado=certificado, senha=senha, uf=uf, CNPJ=CNPJ)
+
+    def baixarxhave(self, chave=None, certificado=None, senha=None, uf=None, homologacao=False, CNPJ=None, ultNSU=0, cStat=0, maxNSU=0, NSU=0):
+        CHAVE = chave[0:44]
+
+                
+        con = ComunicacaoSefaz(uf, certificado, senha, homologacao)
+        xml = con.consulta_distribuicao(cnpj=CNPJ, chave=CHAVE)
+        NSU = str(NSU).zfill(15)
+        print(f'Nova consulta a partir do NSU: {NSU}')
+        logging.info(f'Nova consulta a partir do NSU: {NSU}')
+        with open(f'./xml/consulta_distrib_gzip-{NSU}.xml', 'w+') as f:
+            f.write(xml.text)
+
+        #resposta = etree.fromstring(xml.content)
+        #print(resposta)
+        resposta = etree.parse(f'./xml/consulta_distrib_gzip-{NSU}.xml')
+        ns = {'ns': NAMESPACE_NFE}
+        
+        contador_resposta = len(resposta.xpath('//ns:retDistDFeInt/ns:loteDistDFeInt/ns:docZip', namespaces=ns))
+        print(f'Quantidade de NSUs na consulta atual: {contador_resposta}')
+        logging.info(f'Quantidade de NSUs na consulta atual: {contador_resposta}')
+
+        cStat = resposta.xpath('//ns:retDistDFeInt/ns:cStat', namespaces=ns)[0].text
+        print(f'cStat: {cStat}')
+        logging.info(f'cStat: {cStat}')
+
+        xMotivo = resposta.xpath('//ns:retDistDFeInt/ns:xMotivo', namespaces=ns)[0].text
+        print(f'xMotivo: {xMotivo}')    
+        logging.info(f'xMotivo: {xMotivo}')
+
+        #maxNSU = resposta.xpath('//ns:retDistDFeInt/ns:maxNSU', namespaces=ns)[0].text
+        print(f'maxNSU: {maxNSU}')
+        logging.info(f'maxNSU: {maxNSU}')
+
+        # 137=nao tem mais arquivos e 138=existem mais arquivos para baixar
+        if (cStat == '138'):
+            for contador_xml in range(contador_resposta):
+                tipo_schema = resposta.xpath('//ns:retDistDFeInt/ns:loteDistDFeInt/ns:docZip/@schema', namespaces=ns)[contador_xml]
+                numero_nsu = resposta.xpath('//ns:retDistDFeInt/ns:loteDistDFeInt/ns:docZip/@NSU', namespaces=ns)[contador_xml]
+                
+                #nfe = 'procNFe_v4.00.xsd'
+                #evento = 'procEventoNFe_v1.00.xsd'
+                #resumo = 'resNFe_v1.01.xsd'
+                if (tipo_schema == 'procNFe_v4.00.xsd'):#  or (tipo_schema == 'resNFe_v1.01.xsd'): 
+                    zip_resposta = resposta.xpath('//ns:retDistDFeInt/ns:loteDistDFeInt/ns:docZip', namespaces=ns)[contador_xml].text
+                    
+                    descompactar_resposta = DescompactaGzip.descompacta(zip_resposta)
+                    texto_descompactado = etree.tostring(descompactar_resposta).decode('utf-8')
+                    caminho_arquivo = f'./xml/{CHAVE}.xml'
+                    with open(caminho_arquivo, 'w+', encoding='UTF-8') as f:
+                        f.write(texto_descompactado)
+
+            # NSU = resposta.xpath('//ns:retDistDFeInt/ns:ultNSU', namespaces=ns)[0].text
+            print(f'NSU: {NSU}')
+            logging.info(f'NSU: {NSU}')
+
+        elif (cStat == '137'):
+            print(f'Não há mais documentos a pesquisar')
+            logging.warning(f'Não há mais documentos a pesquisar')
+ 
+        else:
+            print(f'Falha')
+            logging.error(f'Falha')
+            
 
     def _get_certificado(self):
         try:
@@ -142,7 +215,49 @@ class Tela(QtWidgets.QMainWindow):# Classe que inicializa o sistema
             QtWidgets.QMessageBox.critical(self, "Atenção", "{}\nVerifique os logs".format(erro))
             return
 
+    def ciencia(self, certificado='', senha='', homologacao=False,CNPJ='', uf='an'):
+        
 
+        """certificado = r"C:\VersoesServico\CONCRESERRA\CONCRESERRA CONCRETO LTDA.pfx"
+        senha = '123456789AB'
+        uf = 'an'
+        homologacao = False
+
+        CNPJ = '10386032000120' """
+        CHAVE = ''
+        ultNSU = 0
+        maxNSU = 0
+        cStat = 0
+        NSU = 0
+
+
+        with open('./chaves.txt', 'r') as files:
+                
+            for linha in files:
+                CHAVE = linha[0:44]
+                manif_dest = EventoManifestacaoDest(
+                    cnpj=CNPJ,                                # cnpj do destinatário
+                    chave=CHAVE, # chave de acesso da nota
+                    data_emissao=datetime.datetime.now(),
+                    uf=uf,
+                    operacao=2  # - numero da operacao 
+                                # 1=Confirmação da Operação
+                                # 2=Ciência da Emissão
+                                # 3=Desconhecimento da Operação
+                                # 4=Operação não Realizada
+                    )
+
+                # serialização
+                serializador = SerializacaoXML(_fonte_dados, homologacao=homologacao)
+                nfe_manif = serializador.serializar_evento(manif_dest)
+
+                # assinatura
+                a1 = AssinaturaA1(certificado, senha)
+                xml = a1.assinar(nfe_manif)
+
+                con = ComunicacaoSefaz(uf, certificado, senha, homologacao)
+                envio = con.evento(modelo='nfe', evento=xml)               # modelo='nfce' ou 'nfe'
+                print(envio.text)
 
     def consulta_token(self,):
         confi = self.lerconfig()

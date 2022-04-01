@@ -46,7 +46,7 @@
           <widget class="QLineEdit" name="lineEdit">
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
           </widget>
@@ -67,7 +67,7 @@
           <widget class="QLineEdit" name="lineEdit_2">
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
           </widget>
@@ -94,7 +94,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
            <property name="echoMode">
@@ -124,7 +124,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
           </widget>
@@ -151,7 +151,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
           </widget>
@@ -172,7 +172,7 @@
           <widget class="QLineEdit" name="lineEdit_6">
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
           </widget>
